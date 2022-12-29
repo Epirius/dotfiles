@@ -35,7 +35,7 @@ colors, backgroundColor, foregroundColor, workspaceColor, foregroundColorTwo = c
 
 
 keys = [
-    # medi keys 
+    # media keys 
     Key([], "XF86AudioLowerVolume", lazy.widget["volume"].decrease_vol(), desc="decrease volume"),
     Key([], "XF86AudioRaiseVolume", lazy.widget["volume"].increase_vol(), desc="increase volume"),
     Key([], "XF86AudioMute", lazy.widget["volume"].mute(), desc="mute volume"),
