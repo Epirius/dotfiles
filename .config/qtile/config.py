@@ -16,7 +16,7 @@ import colors
 mod = "mod4"
 terminal = "konsole" # guess_terminal()
 browser = "firefox"
-file_launcher1 = 'rofi -show run'
+file_launcher1 = 'rofi -show drun'
 touchpad_command = 'xinput --set-prop "ELAN2204:00 04F3:3109 Touchpad" "libinput Natural Scrolling Enabled" 1'    
 
 
@@ -41,6 +41,9 @@ keys = [
     Key([], "XF86AudioMute", lazy.widget["volume"].mute(), desc="mute volume"),
     Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl s +5%"), desc="increase brightness"),
     Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl s 5%-"), desc="decrease brightness"),
+
+    # Toggle bar 
+    Key([mod], "p", lazy.hide_show_bar(), desc="toggle the bar"),
     
     # Switch between windows
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
@@ -112,7 +115,7 @@ layouts = [
     # layout.Stack(num_stacks=2),
     # layout.Bsp(),
     # layout.Matrix(),
-    layout.MonadTall(),
+    layout.MonadTall(border_focus='#7e618c', margin=0),
     # layout.MonadWide(),
     # layout.RatioTile(),
     # layout.Tile(),
@@ -128,7 +131,7 @@ powerline = {
 }
 
 widget_defaults = dict(
-    font="sans",
+    font="FiraMono",
     fontsize=16,
     padding=3,
     background=backgroundColor,
@@ -150,7 +153,7 @@ screens = [
                     ),
                 widget.CurrentLayout(),
                 widget.Prompt(),
-                widget.WindowName(**powerline),
+                widget.WindowName(format='{state}', **powerline),
                 widget.Chord(
                     chords_colors={
                         "launch": ("#ff0000", "#ffffff"),
@@ -218,6 +221,9 @@ def start_once():
     home = os.path.expanduser('~')
     subprocess.call([home + '/.config/qtile/autostart.sh'])
 
+@hook.subscribe.startup
+def startup():
+    qtile.cmd_hide_show_bar('all')
 
 # XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
 # string besides java UI toolkits; you can see several discussions on the

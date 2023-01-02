@@ -47,4 +47,8 @@ function gcp() {
 }
 
 
+path+=("/home/felixk/.local/share/JetBrains/Toolbox/scripts/")
+path+=("/home/felixk/.local/share/JetBrains/Toolbox/bin/")
+
+
 ##########  </ Felix end >  ###############################################
