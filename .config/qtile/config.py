@@ -1,22 +1,19 @@
 import os
-import re
-import socket
 import subprocess
 from libqtile import qtile, bar, layout, widget, hook
 from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
-from libqtile.utils import guess_terminal
-from qtile_extras import widget
 from qtile_extras.widget.decorations import PowerLineDecoration
-from libqtile.widget import backlight
 
 
 import colors
 
+home = os.path.expanduser('~')
 mod = "mod4"
-terminal = "konsole" # guess_terminal()
+terminal = "konsole"  # guess_terminal()
 browser = "firefox"
 file_launcher1 = 'rofi -show drun'
+file_launcher2 = 'rofi -show run'
 touchpad_command = 'xinput --set-prop "ELAN2204:00 04F3:3109 Touchpad" "libinput Natural Scrolling Enabled" 1'    
 
 
@@ -27,24 +24,28 @@ everforest = colors.everforest()
 nord = colors.nord()
 gruvbox = colors.gruvbox()
 
-#Choose colorscheme
+# Choose colorscheme
 colorscheme = nord
 
-#Colorschme funcstion
+# Colorschme funcstion
 colors, backgroundColor, foregroundColor, workspaceColor, foregroundColorTwo = colorscheme 
 
 
+
 keys = [
-    # media keys 
+    # media keys
     Key([], "XF86AudioLowerVolume", lazy.widget["volume"].decrease_vol(), desc="decrease volume"),
     Key([], "XF86AudioRaiseVolume", lazy.widget["volume"].increase_vol(), desc="increase volume"),
     Key([], "XF86AudioMute", lazy.widget["volume"].mute(), desc="mute volume"),
     Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl s +5%"), desc="increase brightness"),
     Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl s 5%-"), desc="decrease brightness"),
 
-    # Toggle bar 
+    # Power menu
+    Key([mod], "q", lazy.spawn("powermenu")),
+
+    # Toggle bar
     Key([mod], "p", lazy.hide_show_bar(), desc="toggle the bar"),
-    
+
     # Switch between windows
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
     Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
@@ -85,6 +86,7 @@ keys = [
     Key([mod], "t", lazy.spawn(terminal), desc="Launch terminal"),
     Key([mod], "b", lazy.spawn(browser), desc = "Launch browser"),
     Key([mod], "Return", lazy.spawn(file_launcher1), desc = "Launch primary launcher"),
+    Key([mod, "shift"], "Return", lazy.spawn(file_launcher2), desc = "Launch secondary launcher"),
 ]
 
 
@@ -137,6 +139,8 @@ widget_defaults = dict(
     background=backgroundColor,
 )
 extension_defaults = widget_defaults.copy()
+c1 = "#1f285d"
+c2 = "#4b849a"
 # colors, backgroundColor, foregroundColor, workspaceColor, foregroundColorTwo = colorscheme 
 screens = [
     Screen(
@@ -164,14 +168,14 @@ screens = [
                 # NB Systray is incompatible with Wayland, consider using StatusNotifier instead
                 # widget.StatusNotifier(),
                 widget.Systray(**powerline),
-                widget.Backlight(brightness_file="/sys/class/backlight/amdgpu_bl0/actual_brightness", max_brightness_file="/sys/class/backlight/amdgpu_bl0/max_brightness", fmt='盛 {}', background="#ff00ff", **powerline),
+                widget.Backlight(brightness_file="/sys/class/backlight/amdgpu_bl0/actual_brightness", max_brightness_file="/sys/class/backlight/amdgpu_bl0/max_brightness", fmt='盛 {}', background=c1, **powerline),
                 widget.Memory(measure_mem='G', fmt = 'Mem: {}', 
                        mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn(terminal + ' -e htop')},
-                    background=colors[6], **powerline
+                    background=c2, **powerline
                     ),
-                widget.Volume(fmt='{}  ', background="#ff00ff", **powerline), 
-                widget.Battery(format='{percent:2.0%}  ', background=colors[6], **powerline),
-                widget.Clock(format="  %a %d/%m |  %H:%M", background="#ff00ff", padding=7, **powerline), #"%Y-%m-%d %a %I:%M %p"),
+                widget.Volume(fmt='{}  ', background=c1, **powerline), 
+                widget.Battery(format='{percent:2.0%}  ', background=c2, **powerline),
+                widget.Clock(format="  %a %d/%m |  %H:%M", background=c1, padding=7, **powerline), #"%Y-%m-%d %a %I:%M %p"),
                 widget.QuickExit(default_text='[X]', countdown_format='[{}]', padding=7),
             ],
             24,
@@ -218,12 +222,12 @@ wl_input_rules = None
 
 @hook.subscribe.startup_once
 def start_once():
-    home = os.path.expanduser('~')
     subprocess.call([home + '/.config/qtile/autostart.sh'])
 
 @hook.subscribe.startup
 def startup():
     qtile.cmd_hide_show_bar('all')
+    
 
 # XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
 # string besides java UI toolkits; you can see several discussions on the

@@ -52,3 +52,5 @@ path+=("/home/felixk/.local/share/JetBrains/Toolbox/bin/")
 
 
 ##########  </ Felix end >  ###############################################
+
+[ -f "/home/felixk/.ghcup/env" ] && source "/home/felixk/.ghcup/env" # ghcup-env
